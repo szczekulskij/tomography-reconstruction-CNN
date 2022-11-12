@@ -30,13 +30,13 @@ def generate_polygon(
 
     img = None
     while img is None:
-        img = generate_polygon_subroutine(side = side,
+        img, rotation_angle = generate_polygon_subroutine(side = side,
                                         rotated = rotated,
                                         randomly_placed = randomly_placed,
                                         noise = noise,
                                         pct_size_range = pct_size_range, 
                                         img_size = img_size)
-    return img
+    return img, rotation_angle
 
 
 
@@ -80,8 +80,8 @@ def generate_polygon_subroutine(
     img1 = ImageDraw.Draw(img)  
     img1.polygon(coordinates, fill = 200)
 
-    if rotated : 
-        img = img.rotate(randint(0,90))
+    rotation_angle = randint(0,90) if rotated else 0
+    img = img.rotate(rotation_angle)
 
     img = convert_to_binary_img(img)
 
@@ -107,4 +107,4 @@ def generate_polygon_subroutine(
     elif side == 6 and ratio < 0.98:
         return None
     else :
-        return img
+        return img, rotation_angle
