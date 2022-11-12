@@ -6,7 +6,44 @@ from PIL import Image, ImageDraw
 from PIL import ImagePath 
 from imutils import rotate
 import matplotlib.pyplot as plt
+from skimage.transform import radon
 
+
+def create_dataset(
+    nr = 100,
+    single_side_size = None
+    ):
+
+    images_list = []
+    sinograms_list = []
+    angles_list = []
+
+    for _ in range(nr):
+        if single_side_size == None:
+            side = randint(4,6)
+        elif type(single_side_size) == int:
+            side = single_side_size
+        else :
+            raise Exception(f"single_side_size has to be either int or None but was: {single_side_size}")
+
+
+
+        img, rotation_angle = generate_polygon(
+                                side = side, # nr of sides/2
+                                rotated = True,
+                                randomly_placed = True,
+                                noise = False,
+                                pct_size_range = [20,80], # What % size of the picture can the polygon take ?
+                                img_size = 256)
+
+        angles = calculate_angles(side, rotation_angle)
+        sinogram = radon(img) 
+
+        images_list.append(img)
+        sinograms_list.append(sinogram)
+        angles_list.append(angles)
+
+    return images_list, sinograms_list, angles_list
 
 
 
@@ -136,3 +173,4 @@ def calculate_angles(side, rotation_angle, binary = True):
         return binary_angles
     else : 
         return post_rotation_angles
+
