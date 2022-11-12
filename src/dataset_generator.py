@@ -7,6 +7,9 @@ from PIL import ImagePath
 from imutils import rotate
 import matplotlib.pyplot as plt
 
+
+
+
 def convert_to_binary_img(img):
     after_conversion = []
     for x in np.array(img):
@@ -113,10 +116,7 @@ def generate_polygon_subroutine(
         return img, rotation_angle
 
 
-
-
-
-def calculate_angles(side, rotation_angle):
+def calculate_angles(side, rotation_angle, binary = True):
     if side == 4:
         # start_angle = 45
         angles = [45, 135]
@@ -128,5 +128,11 @@ def calculate_angles(side, rotation_angle):
         angles = [0, 60, 120, 180]
 
     post_rotation_angles = [round((i + rotation_angle) % 180) for i in angles]
-    return post_rotation_angles
-        
+    binary_angles = [0] * 180
+    for angle_index in post_rotation_angles:
+        binary_angles[angle_index] = 1
+
+    if binary:
+        return binary_angles
+    else : 
+        return post_rotation_angles
