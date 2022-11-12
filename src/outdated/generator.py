@@ -25,7 +25,7 @@ def single_square_data_generator(img_size = 91, # size of the img
                                  max_square_size = 50, 
                                  own_sinogram_fnc = False,
                                  rotation = False,
-                                     ) -> " (sinogram , image, angles) tuple ":
+                                     ):
     
     
     padding = (img_size - max_square_size)//2
@@ -110,5 +110,5 @@ def sinogram_fnc(img):
 
 
 
-def visualize(img) -> "draws the image" :
+def visualize(img) :
     plt.imshow(img, cmap=cm.gray)
