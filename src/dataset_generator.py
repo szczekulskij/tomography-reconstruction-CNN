@@ -11,7 +11,8 @@ from skimage.transform import radon
 
 def create_dataset(
     nr = 100,
-    single_side_size = None
+    single_side_size = None,
+    centered = True
     ):
 
     images_list = []
@@ -31,7 +32,7 @@ def create_dataset(
         img, rotation_angle = generate_polygon(
                                 side = side, # nr of sides/2
                                 rotated = True,
-                                randomly_placed = True,
+                                centered = centered,
                                 noise = False,
                                 pct_size_range = [20,80], # What % size of the picture can the polygon take ?
                                 img_size = 256)
@@ -61,9 +62,9 @@ def convert_to_binary_img(img):
     return np.array(after_conversion)
         
 def generate_polygon(
-    side = 2, # nr of sides/2
+    side = 4, # nr of sides/2
     rotated = True,
-    randomly_placed = True,
+    centered = True,
     noise = False,
     pct_size_range = [20,80], # What % size of the picture can the polygon take ?
     img_size = 64):   
@@ -72,7 +73,7 @@ def generate_polygon(
     while img is None:
         img, rotation_angle = generate_polygon_subroutine(side = side,
                                         rotated = rotated,
-                                        randomly_placed = randomly_placed,
+                                        centered = centered,
                                         noise = noise,
                                         pct_size_range = pct_size_range, 
                                         img_size = img_size)
@@ -84,7 +85,7 @@ def generate_polygon(
 def generate_polygon_subroutine(
     side = 4, # nr of sides/2
     rotated = True,
-    randomly_placed = True,
+    centered = True,
     noise = False,
     pct_size_range = [20,80], # What % size of the picture can the polygon take ?
     img_size = 128):        
@@ -103,13 +104,13 @@ def generate_polygon_subroutine(
         ]  
 
     # Re-centre or randomly place the image
-    if randomly_placed:
+    if not centered:
         x_offset = randint(PADDING, img_size - side_size * 2 - PADDING)
         y_offset = randint(PADDING, img_size - side_size * 2 - PADDING)
     else:
         x_offset = img_size/2 - side_size
         y_offset = img_size/2 - side_size
-    coordinates_before = coordinates
+    # coordinates_before = coordinates
     coordinates = [(x + x_offset, y + y_offset)for x,y in coordinates]
 
 
