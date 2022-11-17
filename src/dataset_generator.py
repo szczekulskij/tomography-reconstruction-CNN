@@ -12,7 +12,8 @@ from skimage.transform import radon
 def create_dataset(
     nr = 100,
     single_side_size = None,
-    centered = True
+    centered = True,
+    img_size = 256
     ):
 
     images_list = []
@@ -35,7 +36,7 @@ def create_dataset(
                                 centered = centered,
                                 noise = False,
                                 pct_size_range = [20,80], # What % size of the picture can the polygon take ?
-                                img_size = 256)
+                                img_size = img_size)
 
         angles = calculate_angles(side, rotation_angle)
         sinogram = radon(img) 
