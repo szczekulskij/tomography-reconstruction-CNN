@@ -1,3 +1,4 @@
+from skimage.transform import iradon
 from sklearn.metrics import mean_squared_error as mse
 import numpy as np
     
@@ -21,5 +22,12 @@ def mse_error(img_list1,img_list2):
     
     return round(error/n,2)
 
-def reconstruction_algorithm():
-    pass
+def reconstruct(sinograms_list):
+    assert np.array(sinograms_list).ndim in [2,3]
+    if np.array(sinograms_list).ndim == 2 :
+        return iradon(sinograms_list)
+
+    reconstruct_list = []
+    for sinogram in sinograms_list:
+        reconstruct_list.append(iradon(sinogram))
+    return reconstruct_list
