@@ -176,14 +176,3 @@ def calculate_angles(side, rotation_angle, binary = True):
         return binary_angles
     else : 
         return post_rotation_angles
-
-def get_non_binary_angles(binary_angles):
-    '''
-    Take in list of length 180
-    return indexes at which value=1
-    '''
-    angles_list = []
-    for index,angle in enumerate(binary_angles):
-        if angle == 1 :
-            angles_list.append(index)
-    return angles_list
