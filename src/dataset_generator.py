@@ -13,7 +13,8 @@ def create_dataset(
     nr = 100,
     single_side_size = None,
     centered = True,
-    img_size = 256
+    img_size = 256,
+    sinogram_preserve_range = True
     ):
 
     images_list = []
@@ -39,7 +40,7 @@ def create_dataset(
                                 img_size = img_size)
 
         angles = calculate_angles(side, rotation_angle)
-        sinogram = radon(img) 
+        sinogram = radon(img, preserve_range = sinogram_preserve_range) 
 
         images_list.append(img)
         sinograms_list.append(sinogram)
