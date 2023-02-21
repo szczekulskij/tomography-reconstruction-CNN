@@ -23,13 +23,13 @@ import matplotlib.pyplot as plt
 
 
 
-images_list, sinograms_list, angles_list = create_dataset(25000, single_side_size = 6, img_size = 128)
+images_list, sinograms_list, angles_list = create_dataset(25000, single_side_size = 6, img_size = 512)
 
 # To load instead of creating - comment out previous line and uncomment next two!
 # with open("pickle_file_hexagon_128", 'rb') as file:
 #     images_list, sinograms_list, angles_list = pickle.load(file)
 
-with open("pickle_file_hexagon_128", 'wb') as file:
+with open("pickle_file_hexagon_512", 'wb') as file:
     pickle.dump([images_list, sinograms_list, angles_list], file)
 
 
@@ -86,7 +86,7 @@ def create_model():
 
 print("Creating model!")
 model = create_model()
-model.build((None, 128, 140, 1))
+model.build((None, 512, 140, 1))
 print("Created model!")
 
 
@@ -146,4 +146,4 @@ print(np.array(y_train).shape)
 
 print("About to start the training!")
 history = model.fit(X_train,y_train, batch_size=200, epochs=300,validation_data=(X_test,y_test))
-model.save('saved_models/128_limited_to_140_hexagon')
+model.save('saved_models/512_limited_to_140_hexagon')
