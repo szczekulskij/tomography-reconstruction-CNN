@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5a58c6ceaa26ddfc22e4b2f75632b567d21d61fa37b7631658ff261374c2c037
-size 70
+.DS_Store
+.ipynb_checkpoints
+/other
+*__pycache__/
+/data/*
+pickle_file*
+src/ai_training_notebooks/saved_models/
+saved_models/
