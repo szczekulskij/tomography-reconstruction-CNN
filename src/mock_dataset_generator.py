@@ -1,3 +1,179 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8b255360dd6406168bdd8f6338db55f80aafeae9553322409188977aa391f871
-size 5291
+import numpy as np
+import pandas as pd
+from random import randint
+import math
+from PIL import Image, ImageDraw
+from PIL import ImagePath 
+from imutils import rotate
+import matplotlib.pyplot as plt
+from skimage.transform import radon
+
+
+def create_dataset(
+    nr = 100,
+    single_side_size = None,
+    centered = True,
+    img_size = 256,
+    sinogram_preserve_range = True
+    ):
+
+    images_list = []
+    sinograms_list = []
+    angles_list = []
+
+    for i in range(nr):
+        if i%100==0 : print(f"So far created {i} out of {nr} elements")
+        if single_side_size == None:
+            side = randint(4,6)
+        elif type(single_side_size) == int:
+            side = single_side_size
+        else :
+            raise Exception(f"single_side_size has to be either int or None but was: {single_side_size}")
+
+
+
+        img, rotation_angle = generate_polygon(
+                                side = side, # nr of sides/2
+                                rotated = True,
+                                centered = centered,
+                                noise = False,
+                                pct_size_range = [20,80], # What % size of the picture can the polygon take ?
+                                img_size = img_size)
+
+        angles = calculate_angles(side, rotation_angle)
+        sinogram = radon(img, preserve_range = sinogram_preserve_range) 
+
+        images_list.append(img)
+        sinograms_list.append(sinogram)
+        angles_list.append(angles)
+
+    return images_list, sinograms_list, angles_list
+
+
+
+def convert_to_binary_img(img):
+    after_conversion = []
+    for x in np.array(img):
+        x_dim = []
+        for y in x:
+            y_dim = []
+            if not np.all((y == 0)):
+                x_dim.append(1)
+            else : 
+                x_dim.append(0)
+        after_conversion.append(x_dim)
+    return np.array(after_conversion)
+        
+def generate_polygon(
+    side = 4, # nr of sides/2
+    rotated = True,
+    centered = True,
+    noise = False,
+    pct_size_range = [20,80], # What % size of the picture can the polygon take ?
+    img_size = 64):   
+
+    img = None
+    while img is None:
+        img, rotation_angle = generate_polygon_subroutine(side = side,
+                                        rotated = rotated,
+                                        centered = centered,
+                                        noise = noise,
+                                        pct_size_range = pct_size_range, 
+                                        img_size = img_size)
+    return img, rotation_angle
+
+
+
+
+def generate_polygon_subroutine(
+    side = 4, # nr of sides/2
+    rotated = True,
+    centered = True,
+    noise = False,
+    pct_size_range = [20,80], # What % size of the picture can the polygon take ?
+    img_size = 128):        
+
+    PADDING = 1
+    side_size_range = [round(i/100 * img_size/2) for i in pct_size_range]
+    assert len(side_size_range) == 2
+    assert side in [4,5,6]
+    side_size = randint(*side_size_range)
+
+
+    coordinates = [
+        (round((math.cos(th) + 1) * side_size),
+        round((math.sin(th) + 1) * side_size))
+        for th in [i * (2 * math.pi) / side for i in range(side)]
+        ]  
+
+    # Re-centre or randomly place the image
+    if not centered:
+        x_offset = randint(PADDING, img_size - side_size * 2 - PADDING)
+        y_offset = randint(PADDING, img_size - side_size * 2 - PADDING)
+    else:
+        x_offset = img_size/2 - side_size
+        y_offset = img_size/2 - side_size
+    # coordinates_before = coordinates
+    coordinates = [(x + x_offset, y + y_offset)for x,y in coordinates]
+
+
+
+
+    image = ImagePath.Path(coordinates).getbbox()  
+    img = Image.new("RGB", (img_size, img_size)) 
+    img1 = ImageDraw.Draw(img)  
+    img1.polygon(coordinates, fill = 200)
+
+    if type(rotated) == int:
+        rotation_angle = rotated
+    else : 
+        rotation_angle = randint(0,90) if rotated else 0
+    img = img.rotate(rotation_angle)
+
+    img = convert_to_binary_img(img)
+
+
+    ### Double check that the image hasn't been cut!
+    existing_area = img.sum()
+    if side == 4:
+        should_be_area = side_size*side_size
+        # ratio is ~2
+    elif side ==5 :
+        should_be_area = 1/4 * math.sqrt(5 * (5 + 2 * math.sqrt(5))) * side_size * side_size
+        # ratio is ~1.40
+    elif side == 6:
+        should_be_area = 3 * math.sqrt(3)/2 * side_size * side_size
+        # ratio around 1
+
+    ratio = existing_area/should_be_area
+
+    if side == 4 and ratio < 1.98:
+        return None, rotation_angle
+    elif side == 5 and ratio <1.38:
+        return None, rotation_angle
+    elif side == 6 and ratio < 0.98:
+        return None, rotation_angle
+    else :
+        return img, rotation_angle
+
+
+def calculate_angles(side, rotation_angle, binary = True):
+    if side == 4:
+        # start_angle = 45
+        angles = [45, 135]
+    elif side == 5:
+        # start_angle = 18
+        angles = [18, 90, 162]
+    elif side == 6:
+        # start_angle = 0
+        angles = [0, 60, 120, 180]
+
+    post_rotation_angles = [round((i + rotation_angle) % 180) for i in angles]
+    binary_angles = [0] * 180
+    for angle_index in post_rotation_angles:
+        binary_angles[angle_index] = 1
+
+    if binary:
+        return binary_angles
+    else : 
+        return post_rotation_angles
