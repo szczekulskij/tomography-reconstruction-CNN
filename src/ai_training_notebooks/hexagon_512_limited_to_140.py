@@ -23,14 +23,14 @@ import matplotlib.pyplot as plt
 
 
 
-images_list, sinograms_list, angles_list = create_dataset(25000, single_side_size = 6, img_size = 512)
 
 # To load instead of creating - comment out previous line and uncomment next two!
-# with open("pickle_file_hexagon_128", 'rb') as file:
-#     images_list, sinograms_list, angles_list = pickle.load(file)
+with open("pickle_file_hexagon_512", 'rb') as file:
+    images_list, sinograms_list, angles_list = pickle.load(file)
 
-with open("pickle_file_hexagon_512", 'wb') as file:
-    pickle.dump([images_list, sinograms_list, angles_list], file)
+# images_list, sinograms_list, angles_list = create_dataset(25000, single_side_size = 6, img_size = 512)
+# with open("pickle_file_hexagon_512", 'wb') as file:
+#     pickle.dump([images_list, sinograms_list, angles_list], file)
 
 
 reconstruct_list = reconstruct(sinograms_list)

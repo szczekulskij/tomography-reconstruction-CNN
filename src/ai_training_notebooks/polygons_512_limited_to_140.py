@@ -23,13 +23,12 @@ import matplotlib.pyplot as plt
 
 
 
-# images_list, sinograms_list, angles_list = create_dataset(20000, single_side_size = None, img_size = 512)
-# images_list, sinograms_list, angles_list = create_dataset(8500, single_side_size = None, img_size = 512)
 
 # To load instead of creating - comment out previous line and uncomment next two!
 with open("pickle_file_polygon_512", 'rb') as file:
     images_list, sinograms_list, angles_list = pickle.load(file)
 
+# images_list, sinograms_list, angles_list = create_dataset(8500, single_side_size = None, img_size = 512)
 # with open("pickle_file_512", 'wb') as file:
 #     pickle.dump([images_list, sinograms_list, angles_list], file)
 
