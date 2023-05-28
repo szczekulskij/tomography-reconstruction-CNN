@@ -6,42 +6,20 @@ import numpy as np
 import pandas as pd
 from random import randint
 import math
-from PIL import Image, ImageDraw
-from PIL import ImagePath 
 import pickle
 # from imutils import rotate
 import matplotlib.pyplot as plt
 from skimage.transform import radon
 
 from src.mock_dataset_generator import create_dataset #, generate_polygon, generate_polygon_subroutine
-from src.new_utils import find_best_angles_in_real, find_best_angles_in_prediction
+from src.new_utils import find_best_angles_in_real, find_best_angles_in_prediction, cut_last_40_angles_from_sinogram_list, cut_last_40_angles_from_angles_list
 
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
 from tensorflow.keras.optimizers.legacy import Adam
 import matplotlib.pyplot as plt
 
-def cut_last_40_angles_from_sinogram_list(sinograms_list):
-    assert type(sinograms_list) == list
-    output = []
-    for sinogram in sinograms_list:
-        cut_sinogram = sinogram[:, :-40]
-        output.append(cut_sinogram)
-    return output
 
-
-def cut_last_40_angles_from_angles_list(angles_list):
-    assert type(angles_list) == list
-    output = []
-    for angle in angles_list: 
-        # Angle is a a liast of 180 angles
-        new_angle = angle[:-40]
-        output.append(new_angle)
-    return output
-
-
-
-# model = tf.keras.models.load_model('../ai_training_notebooks/saved_models/512_limited_to_140_polygon')
 model = tf.keras.models.load_model('src/ai_training_notebooks/saved_models/128_limited_to_140_hexagon')
 images_list, sinograms_list, angles_list = create_dataset(10, single_side_size = 6, img_size = 128)
 
