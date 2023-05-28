@@ -139,4 +139,3 @@ def transform_angles_data_old(angles_list, high_nr = 100, neighbouring_angles = 
                 angles[(indice+i)%180] = high_nr - i * drop
         output_angles_list.append(angles)
     return np.array(output_angles_list)
-
