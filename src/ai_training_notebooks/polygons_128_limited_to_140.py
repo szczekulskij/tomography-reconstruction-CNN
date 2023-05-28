@@ -15,6 +15,7 @@ from skimage.transform import radon
 
 from src.mock_dataset_generator import create_dataset #, generate_polygon, generate_polygon_subroutine
 from src.utils import mse_error, reconstruct, get_split, choose_top_angles, get_non_binary_angles, transform_angles_data
+from src.new_utils import cut_last_40_angles_from_sinogram_list, cut_last_40_angles_from_angles_list
 
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
@@ -39,24 +40,6 @@ reconstruct_list = reconstruct(sinograms_list)
 
 
 print("average mse error for 50 polygon-shaped pics:", mse_error(images_list, reconstruct_list))
-
-def cut_last_40_angles_from_sinogram_list(sinograms_list):
-    assert type(sinograms_list) == list
-    output = []
-    for sinogram in sinograms_list:
-        cut_sinogram = sinogram[:, :-40]
-        output.append(cut_sinogram)
-    return output
-
-
-def cut_last_40_angles_from_angles_list(angles_list):
-    assert type(angles_list) == list
-    output = []
-    for angle in angles_list: 
-        # Angle is a a liast of 180 angles
-        new_angle = angle[:-40]
-        output.append(new_angle)
-    return output
 
 def create_model():
     model = tf.keras.Sequential([

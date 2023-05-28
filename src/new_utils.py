@@ -66,3 +66,22 @@ def find_best_angles_in_real(angles_list):
     output: [5, 9] - list of indices
     '''
     return [index for index, value  in enumerate(angles_list) if value == 1]
+
+
+def cut_last_40_angles_from_sinogram_list(sinograms_list):
+    assert type(sinograms_list) == list
+    output = []
+    for sinogram in sinograms_list:
+        cut_sinogram = sinogram[:, :-40]
+        output.append(cut_sinogram)
+    return output
+
+
+def cut_last_40_angles_from_angles_list(angles_list):
+    assert type(angles_list) == list
+    output = []
+    for angle in angles_list: 
+        # Angle is a a liast of 180 angles
+        new_angle = angle[:-40]
+        output.append(new_angle)
+    return output
